@@ -36,7 +36,7 @@ setInterval(() => {
   if (sendPlayerStateUpdates) {
     playerState.packetInfo.seqNo++;
     console.log('seqNo', playerState.packetInfo.seqNo);
-    // sendData(JSON.stringify(playerState));
+    sendData(JSON.stringify(playerState));
   }
 }, 500);
 
