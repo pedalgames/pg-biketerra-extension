@@ -12,6 +12,7 @@ let playerState = {
   speed: 0,
   distance: 0,
   climbing: 0,
+  time: 0,
   packetInfo: {
     format: 'playerState_v1',
     source: 'biketerra',
@@ -76,6 +77,10 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 
       case 'elevation':
         playerState.climbing = parseFloat(message.data.value) ?? 0; // m
+        break;
+        
+      case 'time':
+        playerState.time = parseInt(message.data.value) ?? 0; // s
         break;
         
       default:
