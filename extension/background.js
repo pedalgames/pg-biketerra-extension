@@ -66,15 +66,15 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         break;  
 
       case 'speed':
-        playerState.speed = parseFloat(message.data.value) ?? 0;
+        playerState.speed = 1000 * 1000 * (parseFloat(message.data.value) ?? 0);  // mm/s
         break;
 
       case 'distance':
-        playerState.distance = parseFloat(message.data.value) ?? 0;
+        playerState.distance = 1000 * parseFloat(message.data.value) ?? 0; // m
         break;
 
       case 'elevation':
-        playerState.climbing = parseFloat(message.data.value) ?? 0;
+        playerState.climbing = parseFloat(message.data.value) ?? 0; // m
         break;
         
       default:
