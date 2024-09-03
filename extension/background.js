@@ -13,6 +13,7 @@ let playerState = {
   distance: 0,
   climbing: 0,
   packetInfo: {
+    format: 'playerState_v1',
     source: 'biketerra',
     seqNo: 0,
 }
