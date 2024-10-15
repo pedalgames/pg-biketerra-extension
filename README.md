@@ -1,4 +1,4 @@
-# Chrome extension for BikeTerra x Pedal Games support
+# Chrome extension for Biketerra x Pedal Games support
 
 
 
