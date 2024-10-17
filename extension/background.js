@@ -79,6 +79,10 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         playerState.climbing = parseFloat(message.data.value) ?? 0; // m
         break;
         
+      case 'gradient':
+        playerState.gradient = parseFloat(message.data.value) ?? 0; // %
+        break;
+        
       case 'time':
         playerState.time = parseInt(message.data.value) ?? 0; // s
         break;

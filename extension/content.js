@@ -32,14 +32,14 @@ if (TEST) {
 
 function observeChanges() {
   console.log("observeChanges");
-  console.log(document.querySelectorAll(".stat-value"));
+  console.log(document.querySelectorAll(".stat-value, .hud-stat"));
   const observer = new MutationObserver((mutations) => {
     mutations.forEach((mutation) => {
       // if (mutation.type === 'childList' || mutation.type === 'attributes') {
       if (mutation.type === "characterData") {
         // if ((mutation.target.parentNode.className !== 'debug') && mutation.target?.classList?.contains('stat-value')) {
         // if ((mutation.target.parentNode.className !== 'debug')) {
-        if (mutation.target.parentNode?.classList?.contains("stat-value")) {
+        if (mutation.target.parentNode?.classList?.contains("stat-value") || mutation.target.parentNode?.classList?.contains("hud-stat")) {
           console.log(mutation);
           // let value = mutation.target.innerText;
           let value = mutation.target.nodeValue;
@@ -69,14 +69,21 @@ function observeChanges() {
             unit = "kmh";
           }
 
-          if (unitHTML.includes(">km<")) {
+          // if (unitHTML.includes("km")) {
+          if (unitHTML == "km") {
             datatype = "distance";
             unit = "km";
           }
 
-          if (unitHTML.includes(">m<")) {
+          // if (unitHTML.includes("m")) {
+          if (unitHTML == "m") {
             datatype = "elevation";
             unit = "m";
+          }
+
+          if (unitHTML.includes("%")) {
+            datatype = "gradient";
+            unit = "%";
           }
 
           console.log(datatype, value, unit);
@@ -85,7 +92,7 @@ function observeChanges() {
             value: value,
             unit: unit,
           });
-        } else if (mutation.target.parentNode?.classList?.contains("menu-timer")) {
+        } else if (mutation.target.parentNode?.classList?.contains("activity-timer-time")) {
           console.log(mutation);
           let timerText = mutation.target.nodeValue;
 
