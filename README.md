@@ -11,7 +11,7 @@ To install the Chrome extension, follow these steps:
 
 1. **Prepare the Extension Directory**:
    - Ensure all files (`manifest.json`, `content.js`, `background.js`, `popup.html`, `popup.js`, `options.html`, `options.js`, and the `icons` folder) in the source `extension` folder are put in a single folder
-   - single folder on your harddisk, e.g., `BikeTerraContentReader.
+   - single folder on your harddisk, e.g., `BiketerraContentReader.
 
 2. **Open Chrome Extensions Page**:
    - Open Google Chrome.
@@ -22,7 +22,7 @@ To install the Chrome extension, follow these steps:
 
 4. **Load Unpacked Extension**:
    - Click on the "Load unpacked" button.
-   - Select the directory where your extension files are located ([`BikeTerraContentReader`]).
+   - Select the directory where your extension files are located ([`BiketerraContentReader`]).
 
 5. **Verify the Extension**:
    - Ensure the extension appears in the list with no errors.
