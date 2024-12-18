@@ -36,9 +36,16 @@ resetPlayerStateTimeout()
 
 setInterval(() => {
   if (sendPlayerStateUpdates) {
+
+    let data = JSON.stringify(playerState);
+
+    chrome.storage.session.set({ playerState: data }).then(() => {
+      // console.log("Value was set: ", data);
+    });
+
     playerState.packetInfo.seqNo++;
-    console.log('seqNo', playerState.packetInfo.seqNo);
-    sendData(JSON.stringify(playerState));
+    // console.log('seqNo', playerState.packetInfo.seqNo);
+    sendData(data);
   }
 }, 500);
 
@@ -46,10 +53,12 @@ setInterval(() => {
 // listen for messages from the content script
 
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+  
+  // console.log("onMessage in background.js", message);
 
   if (message.action === 'elementChanged') {
 
-    console.log('elementChanged', message.data);
+    // console.log('elementChanged', message.data);
 
     resetPlayerStateTimeout();
     sendPlayerStateUpdates = true;
@@ -91,7 +100,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         break;
     }
 
-    console.log(playerState);
+    // console.log(playerState);
 
   }
 });
@@ -99,7 +108,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 
 // Function to reset the inactivity timer
 function resetPlayerStateTimeout() {
-  console.log('resetPlayerStateTimeout');
+  // console.log('resetPlayerStateTimeout');
   if (playerStateTimeout) {
     clearTimeout(playerStateTimeout);
   }

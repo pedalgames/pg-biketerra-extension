@@ -40,7 +40,7 @@ function observeChanges() {
         // if ((mutation.target.parentNode.className !== 'debug') && mutation.target?.classList?.contains('stat-value')) {
         // if ((mutation.target.parentNode.className !== 'debug')) {
         if (mutation.target.parentNode?.classList?.contains("stat-value") || mutation.target.parentNode?.classList?.contains("hud-stat")) {
-          console.log(mutation);
+          // console.log(mutation);
           // let value = mutation.target.innerText;
           let value = mutation.target.nodeValue;
 
@@ -93,7 +93,7 @@ function observeChanges() {
             unit: unit,
           });
         } else if (mutation.target.parentNode?.classList?.contains("activity-timer-time")) {
-          console.log(mutation);
+          // console.log(mutation);
           let timerText = mutation.target.nodeValue;
 
           // timerText has format 'mm:ss' or 'h:mm:ss'
@@ -131,6 +131,24 @@ function observeChanges() {
 
   observer.observe(document, config);
 }
+
+function toggleUI() {
+  console.log("toggleUI");
+  let hudBar = document.querySelector('#app > .hud-bar');
+  let miniMap = document.querySelector('#app > .minimap-wrap');
+  hudBar.style.display = hudBar.style.display === 'none' ? '' : 'none';
+  miniMap.style.display = miniMap.style.display === 'none' ? '' : 'none';
+}
+
+
+// listen for message 'toggleUI' from popup.js
+chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+  console.log("onMessage in content.js", request);
+  if (request.action === "toggleUI") {
+    toggleUI();
+  }
+});
+
 
 console.log("content.js");
 console.log(document.querySelectorAll(".stat-value"));

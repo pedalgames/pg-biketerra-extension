@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
-  "name": "BikeTerra Content Reader",
-  "version": "1.0",
+  "name": "BikeTerra x Pedal Games addon",
+  "version": "1.1",
   "description": "Reads content from biketerra.com and broadcasts changes using WebSocket",
   "permissions": [
     "activeTab",
