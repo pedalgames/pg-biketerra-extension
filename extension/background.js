@@ -25,14 +25,30 @@ let playerState = {
 
 let sendPlayerStateUpdates = false;
 
+
 // define a timeout to reset the sendPlayerStateUpdates flag to false after a period of inactivity
 
+const DEFAULT_INACTIVITY_TIMEOUT = 30; // 30 seconds of inactivity
+let inactivityTimeoutSetting = DEFAULT_INACTIVITY_TIMEOUT;
+// get the inactivity timeout from the options page
+chrome.storage.sync.get(["inactivityTimeoutSetting"], (result) => {
+  inactivityTimeoutSetting = 1000 * (result.inactivityTimeoutSetting ?? DEFAULT_INACTIVITY_TIMEOUT);
+});
+
 let playerStateTimeout;
-const PLAYERSTATE_TIMEOUT = 30000; // 30 seconds of inactivity
 resetPlayerStateTimeout()
+
 
 // define a interval to send the playerState object using websocket 
 // every half second (500ms) if sendPlayerStateUpdates is true
+
+const DEFAULT_SEND_INTERVAL = 500; // 500ms
+
+let sendIntervalSetting;
+// get the send interval from the options page
+chrome.storage.sync.get(["sendIntervalSetting"], (result) => {
+  sendIntervalSetting = result.sendIntervalSetting ?? DEFAULT_SEND_INTERVAL;
+});
 
 setInterval(() => {
   if (sendPlayerStateUpdates) {
@@ -47,7 +63,7 @@ setInterval(() => {
     // console.log('seqNo', playerState.packetInfo.seqNo);
     sendData(data);
   }
-}, 500);
+}, send);
 
 
 // listen for messages from the content script
@@ -112,12 +128,34 @@ function resetPlayerStateTimeout() {
   if (playerStateTimeout) {
     clearTimeout(playerStateTimeout);
   }
-  playerStateTimeout = setTimeout(setSendPlayerStateUpdatesFalse, PLAYERSTATE_TIMEOUT);
+  playerStateTimeout = setTimeout(setSendPlayerStateUpdatesFalse, inactivityTimeoutSetting ?? DEFAULT_INACTIVITY_TIMEOUT);
 }
 
 function setSendPlayerStateUpdatesFalse() {
   sendPlayerStateUpdates = false;
 } 
+
+function setStatus(status, notificationId = null) {
+  chrome.storage.session.set({ socketStatus: status }).then(() => {
+    // console.log("Value was set: ", data);
+  });
+  if (notificationId) {
+    chrome.notifications.create(
+      notificationId,
+      {
+        type: "basic",
+        iconUrl: "icons/icon48.png",
+        title: "Error",
+        message:
+          status,
+      },
+      notificationCallback
+    );
+  }
+  console.log(
+    status
+  );
+}
 
 let inactivityTimeout;
 const INACTIVITY_PERIOD = 30000; // 30 seconds of inactivity
@@ -128,47 +166,29 @@ function openSocket() {
     chrome.storage.sync.get(["websocketAddress"], (result) => {
       const address = result.websocketAddress;
       if (!address) {
-        chrome.notifications.create(
-          "biketerra.extension.notification.ws-address-error",
-          {
-            type: "basic",
-            // iconUrl: "icons/icon48.png",
-            title: "WebSocket Error",
-            message:
-              "WebSocket address not set. Please set it in the options page.",
-          },
-          notificationCallback
-        );
-        console.log(
-          "WebSocket address not set. Please set it in the options page."
-        );
+        // setStatus("WebSocket address not set. Please set it in the options page.", "biketerra.extension.notification.ws-address-error");
+        setStatus("WebSocket address not set. Please set it in the options page.");
         return;
       }
 
       socket = new WebSocket(address);
 
       socket.onopen = () => {
-        console.log("WebSocket connection opened");
+        // console.log("WebSocket connection opened");
+        setStatus("WebSocket connection opened");
+    
         resetInactivityTimer();
         
       };
 
       socket.onclose = () => {
-        console.log("WebSocket connection closed");
+        // console.log("WebSocket connection closed");
       };
 
       socket.onerror = (error) => {
-        chrome.notifications.create(
-          "biketerra.extension.notification.ws-other-error",
-          {
-            type: "basic",
-            // iconUrl: "icons/icon48.png",
-            title: "WebSocket Error",
-            message: error.message,
-          },
-          notificationCallback
-        );
-        console.error("WebSocket Error: ", error);
+        // console.log(error);
+        // setStatus("WebSocket error: " + error, "biketerra.extension.notification.ws-other-error");
+        setStatus("WebSocket error");
       };
     });
   }
@@ -177,7 +197,6 @@ function openSocket() {
 // Function to send data and reset the inactivity timer
 function sendData(data) {
   openSocket();
-
 
   if (socket?.readyState === WebSocket.OPEN) {
     socket.send(data);
@@ -211,18 +230,6 @@ function closeSocket() {
   // also stop sending data
   sendPlayerStateUpdates = false;
 }
-
-
-// chrome.notifications.create(
-//   'biketerra.extension.notification.sample-notification',
-//   {
-//     type: 'basic',
-//     iconUrl: 'icons/icon48.png',
-//     title: 'Sample notification',
-//     message: 'Just a test'
-//   }
-// );
-
 
 
 // ---

@@ -7,7 +7,30 @@
 <body>
   <h1>Extension Options - Biketerra x Pedal Games addon</h1>
   <label for="websocketAddress">WebSocket Address:</label>
-  <input type="text" id="websocketAddress" placeholder="ws://localhost:8080" />
+  <input type="text" id="websocketAddress" placeholder="ws://localhost:49998" />
+  <p>
+    <small>
+      Note: The WebSocket address is the address of the server to which the extension will send data.
+    </small>
+  </p>
+
+  <label for="sendIntervalSetting">Send Interval (ms):</label>
+  <input type="number" id="sendIntervalSetting" placeholder="500" />
+  <p>
+    <small>
+      Note: The send interval is the time in milliseconds between each data packet sent to the server.
+    </small>
+  </p>
+
+  <label for="inactivityTimeoutSetting">Inactivity Timeout (s):</label>
+  <input type="number" id="inactivityTimeoutSetting" placeholder="30" />
+  <p>
+    <small>
+      Note: The inactivity timeout is the time in seconds after which the extension will stop sending data to the server if no data has been received from the game.
+    </small>
+  </p>
+
+
   <button id="save">Save</button>
 
   <hr>
