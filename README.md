@@ -1,5 +1,8 @@
 # Chrome extension for Biketerra x Pedal Games support
 
+## How to download
+
+See the green '<> Code' button. Clone the repository or download a zip file of the code.
 
 
 ## How to install
