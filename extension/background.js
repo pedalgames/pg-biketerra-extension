@@ -13,11 +13,20 @@ let playerState = {
   distance: 0,
   climbing: 0,
   time: 0,
+  units: {
+    power: 'W',
+    heartrate: 'bpm',
+    cadence: 'rpm',
+    speed: 'km/h',
+    distance: 'km',
+    climbing: 'm',
+    time: 's',
+  },
   packetInfo: {
     format: 'playerState_v1',
     source: 'biketerra',
     seqNo: 0,
-}
+  }
 };
 
 
@@ -48,22 +57,24 @@ let sendIntervalSetting;
 // get the send interval from the options page
 chrome.storage.sync.get(["sendIntervalSetting"], (result) => {
   sendIntervalSetting = result.sendIntervalSetting ?? DEFAULT_SEND_INTERVAL;
-});
+  console.log('sendIntervalSetting', sendIntervalSetting);
+  
+  setInterval(() => {
+    if (sendPlayerStateUpdates) {
+  
+      let data = JSON.stringify(playerState);
+  
+      chrome.storage.session.set({ playerState: data }).then(() => {
+        // console.log("Value was set: ", data);
+      });
+  
+      playerState.packetInfo.seqNo++;
+      // console.log('seqNo', playerState.packetInfo.seqNo);
+      sendData(data);
+    }
+  }, sendIntervalSetting);
 
-setInterval(() => {
-  if (sendPlayerStateUpdates) {
-
-    let data = JSON.stringify(playerState);
-
-    chrome.storage.session.set({ playerState: data }).then(() => {
-      // console.log("Value was set: ", data);
-    });
-
-    playerState.packetInfo.seqNo++;
-    // console.log('seqNo', playerState.packetInfo.seqNo);
-    sendData(data);
-  }
-}, send);
+});  
 
 
 // listen for messages from the content script
@@ -93,11 +104,11 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         break;  
 
       case 'speed':
-        playerState.speed = 1000 * 1000 * (parseFloat(message.data.value) ?? 0);  // mm/s
+        playerState.speed = parseFloat(message.data.value) ?? 0;  // km/h
         break;
 
       case 'distance':
-        playerState.distance = 1000 * parseFloat(message.data.value) ?? 0; // m
+        playerState.distance = parseFloat(message.data.value) ?? 0; // km
         break;
 
       case 'elevation':
@@ -160,36 +171,49 @@ function setStatus(status, notificationId = null) {
 let inactivityTimeout;
 const INACTIVITY_PERIOD = 30000; // 30 seconds of inactivity
 
+const DEFAULT_WS_ADDRESS = "ws://localhost:49998";
+
 // Function to open the WebSocket connection
 function openSocket() {
   if (!socket || socket.readyState === WebSocket.CLOSED) {
     chrome.storage.sync.get(["websocketAddress"], (result) => {
-      const address = result.websocketAddress;
+      const address = result.websocketAddress || DEFAULT_WS_ADDRESS;
       if (!address) {
         // setStatus("WebSocket address not set. Please set it in the options page.", "biketerra.extension.notification.ws-address-error");
         setStatus("WebSocket address not set. Please set it in the options page.");
         return;
       }
 
-      socket = new WebSocket(address);
+      socket = null;  // reset the socket
 
-      socket.onopen = () => {
-        // console.log("WebSocket connection opened");
-        setStatus("WebSocket connection opened");
-    
-        resetInactivityTimer();
+      try {
+
+        socket = new WebSocket(address);
+
+        socket.onopen = () => {
+          // console.log("WebSocket connection opened");
+          setStatus("WebSocket connection opened");
+          
+          resetInactivityTimer();
+          
+        };
         
-      };
-
-      socket.onclose = () => {
-        // console.log("WebSocket connection closed");
-      };
-
-      socket.onerror = (error) => {
-        // console.log(error);
+          socket.onclose = () => {
+            // console.log("WebSocket connection closed");
+            setStatus("WebSocket connection closed");
+          };
+  
+          socket.onerror = (event) => {
+            console.log('onerror:', event);
+            // setStatus("WebSocket error: " + error, "biketerra.extension.notification.ws-other-error");
+            setStatus("WebSocket error");
+          };
+      } catch (error) {
+        console.log('catch:', error);
         // setStatus("WebSocket error: " + error, "biketerra.extension.notification.ws-other-error");
-        setStatus("WebSocket error");
-      };
+        setStatus("WebSocket error caught: " + error);
+      }
+
     });
   }
 }

@@ -134,8 +134,8 @@ function observeChanges() {
 
 function toggleUI() {
   console.log("toggleUI");
-  let hudBar = document.querySelector('#app > .hud-bar');
-  let miniMap = document.querySelector('#app > .minimap-wrap');
+  let hudBar = document.querySelector('#app .hud-bar');
+  let miniMap = document.querySelector('#app .map-wrap');
   hudBar.style.display = hudBar.style.display === 'none' ? '' : 'none';
   miniMap.style.display = miniMap.style.display === 'none' ? '' : 'none';
 }

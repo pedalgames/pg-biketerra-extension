@@ -4,11 +4,14 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('content').innerText = result.playerState ?? '--';
   });
   chrome.storage.session.get(["socketStatus"]).then((result) => {
-    document.getElementById('websocketStatus').innerText = result.socketStatus ?? '--';
+    document.getElementById('websocketStatus').innerText = result?.socketStatus ?? '--';
   });
   chrome.storage.session.onChanged.addListener((changes) => {
-    document.getElementById('content').innerText = changes.playerState.newValue ?? '--';
-    document.getElementById('websocketStatus').innerText = changes.socketStatus.newValue ?? '--';
+    console.log(changes)
+    document.getElementById('content').innerText = changes?.playerState?.newValue ?? '--';
+    if (changes?.socketStatus) {
+      document.getElementById('websocketStatus').innerText = changes?.socketStatus?.newValue ?? '--';
+    }
   });
 
   document.getElementById('toggleUI').addEventListener('click', () => {
