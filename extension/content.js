@@ -31,8 +31,8 @@ if (TEST) {
 }
 
 function observeChanges() {
-  console.log("observeChanges");
-  console.log(document.querySelectorAll(".stat-value, .hud-stat"));
+  // console.log("observeChanges");
+  // console.log(document.querySelectorAll(".stat-value, .hud-stat"));
   const observer = new MutationObserver((mutations) => {
     mutations.forEach((mutation) => {
       // if (mutation.type === 'childList' || mutation.type === 'attributes') {
@@ -86,7 +86,10 @@ function observeChanges() {
             unit = "%";
           }
 
-          console.log(datatype, value, unit);
+          if (TEST) {
+            console.log(datatype, value, unit);
+          }
+
           sendMessageToBackground({
             datatype: datatype,
             value: value,
@@ -133,7 +136,7 @@ function observeChanges() {
 }
 
 function toggleUI() {
-  console.log("toggleUI");
+  // console.log("toggleUI");
   let hudBar = document.querySelector('#app .hud-bar');
   let miniMap = document.querySelector('#app .map-wrap');
   hudBar.style.display = hudBar.style.display === 'none' ? '' : 'none';
@@ -143,16 +146,15 @@ function toggleUI() {
 
 // listen for message 'toggleUI' from popup.js
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-  console.log("onMessage in content.js", request);
+  // console.log("onMessage in content.js", request);
   if (request.action === "toggleUI") {
     toggleUI();
   }
 });
 
 
-console.log("content.js");
-console.log(document.querySelectorAll(".stat-value"));
-// observeChanges();
+// console.log("content.js");
+// console.log(document.querySelectorAll(".stat-value"));
 
 // detect when the page is fully loaded and then start observing changes
 document.addEventListener("DOMContentLoaded", () => {
