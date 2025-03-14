@@ -69,16 +69,29 @@ function observeChanges() {
             unit = "kmh";
           }
 
-          // if (unitHTML.includes("km")) {
+          if (unitHTML.includes("mph")) {
+            datatype = "speed";
+            unit = "mph";
+          }
+
           if (unitHTML == "km") {
             datatype = "distance";
             unit = "km";
           }
 
-          // if (unitHTML.includes("m")) {
+          if (unitHTML == "mi") {
+            datatype = "distance";
+            unit = "mi";
+          }
+
           if (unitHTML == "m") {
             datatype = "elevation";
             unit = "m";
+          }
+
+          if (unitHTML == "ft") {
+            datatype = "elevation";
+            unit = "ft";
           }
 
           if (unitHTML.includes("%")) {

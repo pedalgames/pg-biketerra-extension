@@ -105,14 +105,17 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 
       case 'speed':
         playerState.speed = parseFloat(message.data.value) ?? 0;  // km/h
+        playerState.units.speed = message.data.unit ?? 'km/h';
         break;
 
       case 'distance':
         playerState.distance = parseFloat(message.data.value) ?? 0; // km
+        playerState.units.distance = message.data.unit ?? 'km';
         break;
 
       case 'elevation':
         playerState.climbing = parseFloat(message.data.value) ?? 0; // m
+        playerState.units.climbing = message.data.unit ?? 'm';
         break;
         
       case 'gradient':
