@@ -20,7 +20,7 @@ if (SIM) {
   }, 1_000);
 }
 
-const TEST = false;
+const TEST = true;
 
 if (TEST) {
   let page = window.location.href;
@@ -44,22 +44,24 @@ function observeChanges() {
           // let value = mutation.target.innerText;
           let value = mutation.target.nodeValue;
 
-          let unitHTML =
-            mutation.target.parentNode?.nextElementSibling?.innerHTML ?? "";
           let unit = "";
           let datatype = "";
 
-          if (unitHTML.includes("ico-hr")) {
+          let unitNode = mutation.target.parentNode?.nextElementSibling;
+          let unitHTML = unitNode?.innerHTML ?? "";
+          console.log("unitHTML:", unitHTML);
+
+          if (unitNode?.classList?.contains('ico-hr') || unitHTML.includes("ico-hr")) {
             datatype = "hr";
             unit = "bpm";
           }
 
-          if (unitHTML.includes("ico-cadence")) {
+          if (unitNode?.classList?.contains('ico-cadence') || unitHTML.includes("ico-cadence")) {
             datatype = "cadence";
             unit = "rpm";
           }
 
-          if (unitHTML.includes("ico-power")) {
+          if (unitNode?.classList?.contains('ico-power') || unitHTML.includes("ico-power")) {
             datatype = "power";
             unit = "W";
           }
@@ -94,10 +96,10 @@ function observeChanges() {
             unit = "ft";
           }
 
-          if (unitHTML.includes("%")) {
-            datatype = "gradient";
-            unit = "%";
-          }
+          // if (unitHTML.includes("%")) {
+          //   datatype = "gradient";
+          //   unit = "%";
+          // }
 
           if (TEST) {
             console.log(datatype, value, unit);
@@ -108,6 +110,30 @@ function observeChanges() {
             value: value,
             unit: unit,
           });
+        } else if (mutation.target.parentNode?.classList?.contains("stat-circle-value")) {
+          console.log(mutation);
+          // let value = mutation.target.innerText;
+          let value = mutation.target.nodeValue;
+
+          let unit = "";
+          let datatype = "";
+          
+          if (mutation.target.parentNode.closest('stat-circle')?.classList?.contains("stat-grade")) {
+            datatype = "gradient";
+            unit = "%";
+          } else if (mutation.target.parentNode.closest('stat-circle')?.classList?.contains("stat-draft")) {
+            datatype = "draft";
+            unit = "W";
+          }
+
+          console.log(datatype, value, unit);
+          if (datatype != "") {
+            sendMessageToBackground({
+              datatype: datatype,
+              value: value,
+              unit: unit,
+            });
+          }
         } else if (mutation.target.parentNode?.classList?.contains("activity-timer-time")) {
           // console.log(mutation);
           let timerText = mutation.target.nodeValue;
@@ -150,10 +176,12 @@ function observeChanges() {
 
 function toggleUI() {
   // console.log("toggleUI");
-  let hudBar = document.querySelector('#app .hud-bar');
-  let miniMap = document.querySelector('#app .map-wrap');
-  hudBar.style.display = hudBar.style.display === 'none' ? '' : 'none';
-  miniMap.style.display = miniMap.style.display === 'none' ? '' : 'none';
+  let hudLeft = document.querySelector('#app .hud-left');
+  let hudBottom = document.querySelector('#app .hud-bottom');
+  let hudRight = document.querySelector('#app .hud-right');
+  if (hudLeft) hudLeft.style.display = hudLeft.style.display === 'none' ? '' : 'none';
+  if (hudBottom) hudBottom.style.display = hudBottom.style.display === 'none' ? '' : 'none';
+  if (hudRight) hudRight.style.display = hudRight.style.display === 'none' ? '' : 'none';
 }
 
 

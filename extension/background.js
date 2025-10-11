@@ -122,6 +122,11 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         playerState.gradient = parseFloat(message.data.value) ?? 0; // %
         break;
         
+      case 'draft':
+        playerState.draft = parseInt(message.data.value) ?? 0; // W
+        playerState.units.draft = message.data.unit ?? 'W';
+        break;
+        
       case 'time':
         playerState.time = parseInt(message.data.value) ?? 0; // s
         break;
