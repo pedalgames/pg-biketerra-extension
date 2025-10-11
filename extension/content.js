@@ -68,7 +68,7 @@ function observeChanges() {
 
           if (unitHTML.includes("kph")) {
             datatype = "speed";
-            unit = "kmh";
+            unit = "km/h";
           }
 
           if (unitHTML.includes("mph")) {
