@@ -20,7 +20,7 @@ if (SIM) {
   }, 1_000);
 }
 
-const TEST = true;
+const TEST = false;
 
 if (TEST) {
   let page = window.location.href;
